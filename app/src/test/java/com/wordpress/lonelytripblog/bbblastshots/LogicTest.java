@@ -1,0 +1,121 @@
+package com.wordpress.lonelytripblog.bbblastshots;
+
+import com.wordpress.lonelytripblog.bbblastshots.data.ProviderInterface;
+import com.wordpress.lonelytripblog.bbblastshots.data.Shot;
+import com.wordpress.lonelytripblog.bbblastshots.data.ShotsProvider;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
+
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
+/**
+ * Test for presenters logic.
+ */
+
+@RunWith(MockitoJUnitRunner.class)
+public class LogicTest {
+
+    @Mock
+    private MVPContract.View mView;
+
+    @Mock
+    ProviderInterface mProvider;
+
+    @Captor
+    private ArgumentCaptor<ProviderInterface.LoadShotsCallback> captor;
+
+    private MVPContract.Presenter mPresenter;
+
+    @Before
+    public void setupPresenter() {
+        mPresenter = new LogicHandler(mView);
+        mProvider = new ShotsProvider();
+    }
+
+    // Verifying right behavior for loading shots
+    @Test
+    public void loadFromRepositoryAndShowInView() {
+
+        List<Shot> allShots = new ShotsProvider().getShots();
+        mPresenter.requestShots();
+
+        // Stubbing with allShots
+        verify(mProvider).getShots(captor.capture());
+        captor.getValue().onShotsLoaded(allShots);
+
+        InOrder inOrder = Mockito.inOrder(mView);
+        inOrder.verify(mView).showLoadingState();
+        inOrder.verify(mView).hideLoadingState();
+        verify(mView).showShots(allShots);
+
+    }
+
+    // Verifying right behavior for updating shots
+    @Test
+    public void updateRepositoryAndShowInView() {
+        List<Shot> allShots = new ShotsProvider().getShots();
+        mPresenter.updateShots();
+
+        // Stubbing with allShots
+        verify(mProvider).getNewShots(captor.capture());
+        captor.getValue().onShotsLoaded(allShots);
+
+        verify(mView).hideRefreshing();
+        verify(mView).showShots(allShots);
+
+    }
+
+    // Test empty model
+    @Test
+    public void noConnectionAndNoShotsSaved() {
+        mPresenter.requestShots();
+
+        // Stubbing with no shots
+        verify(mProvider).getShots(captor.capture());
+        captor.getValue().onShotsLoaded(null);
+
+        InOrder inOrder = Mockito.inOrder(mView);
+        inOrder.verify(mView).showLoadingState();
+        inOrder.verify(mView).showEmptyView();
+        verify(mView, never()).showShots(null);
+    }
+
+    // Test empty model first and then updated model with shots
+    @Test
+    public void noConnectionAndNoShotsSavedAndThenConnectionAppears() {
+
+        List<Shot> allShots = new ShotsProvider().getShots();
+        mPresenter.requestShots();
+
+        // Stubbing with no shots
+        verify(mProvider).getShots(captor.capture());
+        captor.getValue().onShotsLoaded(null);
+
+        InOrder inOrder = Mockito.inOrder(mView);
+        inOrder.verify(mView).showLoadingState();
+        inOrder.verify(mView).showEmptyView();
+        inOrder.verify(mView, never()).showShots(null);
+
+        mPresenter.updateShots();
+
+        // Stubbing with all shots
+        verify(mProvider).getShots(captor.capture());
+        captor.getValue().onShotsLoaded(allShots);
+
+        inOrder.verify(mView).hideRefreshing();
+        inOrder.verify(mView).hideEmptyView();
+        inOrder.verify(mView).showShots(allShots);
+    }
+
+}
