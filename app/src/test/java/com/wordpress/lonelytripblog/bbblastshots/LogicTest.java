@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test for presenters logic.
@@ -39,8 +40,7 @@ public class LogicTest {
 
     @Before
     public void setupPresenter() {
-        mPresenter = new LogicHandler(mView);
-        mProvider = new ShotsProvider();
+        mPresenter = new LogicHandler(mView, mProvider);
     }
 
     // Verifying right behavior for loading shots
@@ -87,6 +87,7 @@ public class LogicTest {
 
         InOrder inOrder = Mockito.inOrder(mView);
         inOrder.verify(mView).showLoadingState();
+        inOrder.verify(mView).hideLoadingState();
         inOrder.verify(mView).showEmptyView();
         verify(mView, never()).showShots(null);
     }
@@ -104,13 +105,15 @@ public class LogicTest {
 
         InOrder inOrder = Mockito.inOrder(mView);
         inOrder.verify(mView).showLoadingState();
+        inOrder.verify(mView).hideLoadingState();
         inOrder.verify(mView).showEmptyView();
-        inOrder.verify(mView, never()).showShots(null);
 
+        // Set true to isEmptyViewShown
+        when(mView.isEmptyViewShown()).thenReturn(true);
+        // Update shots and return shots this time
         mPresenter.updateShots();
-
         // Stubbing with all shots
-        verify(mProvider).getShots(captor.capture());
+        verify(mProvider).getNewShots(captor.capture());
         captor.getValue().onShotsLoaded(allShots);
 
         inOrder.verify(mView).hideRefreshing();

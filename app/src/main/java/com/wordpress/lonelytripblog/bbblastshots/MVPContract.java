@@ -15,6 +15,7 @@ public class MVPContract {
         void hideLoadingState();
         void showEmptyView();
         void hideEmptyView();
+        boolean isEmptyViewShown();
         void hideRefreshing();
     }
 
