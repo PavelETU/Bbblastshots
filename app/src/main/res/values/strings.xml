@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Bbblastshots</string>
+    <string name="app_name">Bbblastshots</string>\
+    <string name="empty_view_string">There is no shots available. \nPlease, check your internet connection.</string>
 </resources>

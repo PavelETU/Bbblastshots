@@ -1,5 +1,6 @@
 package com.wordpress.lonelytripblog.bbblastshots;
 
+
 import com.wordpress.lonelytripblog.bbblastshots.data.ProviderInterface;
 import com.wordpress.lonelytripblog.bbblastshots.data.Shot;
 
