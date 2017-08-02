@@ -12,25 +12,21 @@ import java.util.List;
 public class ShotsProvider implements ProviderInterface {
 
     private List<Shot> shots;
+    private ProviderInterface internetProvider;
 
     public ShotsProvider() {
-
+        internetProvider = new InternetProvider();
     }
 
 
     @Override
     public void getShots(LoadShotsCallback callback) {
+        internetProvider.getShots(callback);
     }
 
     @Override
     public void getNewShots(LoadShotsCallback callback) {
+        internetProvider.getNewShots(callback);
     }
 
-    public List<Shot> getShots() {
-        return shots;
-    }
-
-    public void setShots(List<Shot> shots) {
-        this.shots = shots;
-    }
 }

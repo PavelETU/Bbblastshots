@@ -3,6 +3,7 @@ package com.wordpress.lonelytripblog.bbblastshots;
 
 import com.wordpress.lonelytripblog.bbblastshots.data.ProviderInterface;
 import com.wordpress.lonelytripblog.bbblastshots.data.Shot;
+import com.wordpress.lonelytripblog.bbblastshots.data.ShotsProvider;
 
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class LogicHandler implements MVPContract.Presenter {
     private MVPContract.View mView;
     private ProviderInterface mProvider;
 
-    public LogicHandler(MVPContract.View mView, ProviderInterface mProvider) {
+    public LogicHandler(MVPContract.View mView) {
         this.mView = mView;
-        this.mProvider = mProvider;
+        this.mProvider = new ShotsProvider();
     }
 
     @Override

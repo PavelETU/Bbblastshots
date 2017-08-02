@@ -40,7 +40,7 @@ public class LogicTest {
 
     @Before
     public void setupPresenter() {
-        mPresenter = new LogicHandler(mView, mProvider);
+        mPresenter = new LogicHandler(mView);
     }
 
     // Verifying right behavior for loading shots

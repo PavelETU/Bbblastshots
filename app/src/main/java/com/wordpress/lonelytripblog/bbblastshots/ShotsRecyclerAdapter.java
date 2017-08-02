@@ -1,6 +1,5 @@
 package com.wordpress.lonelytripblog.bbblastshots;
 
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,9 +42,8 @@ public class ShotsRecyclerAdapter extends RecyclerView.Adapter<ShotsRecyclerAdap
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Shot shot = shots.get(position);
-        String url = shot.getUrl_hidpi() == null ? shot.getUrl_normal() == null ? shot.getUrl_teaser(): shot.getUrl_normal() : shot.getUrl_hidpi();
         holder.shotPicture.setMinimumHeight(height);
-        Picasso.with(holder.shotPicture.getContext()).load(url).resize(width,height).into(holder.shotPicture);
+        Picasso.with(holder.shotPicture.getContext()).load(shot.getUrl()).resize(width,height).into(holder.shotPicture);
         holder.shotTitle.setText(shot.getTitle());
         holder.shotDescription.setText(shot.getDescription());
     }
