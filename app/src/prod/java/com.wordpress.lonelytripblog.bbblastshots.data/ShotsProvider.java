@@ -71,23 +71,34 @@ public class ShotsProvider implements ProviderInterface {
                 // If user doesn't have access to the internet - result will be null,
                 // If there are no new shots - newShots with size 0.
                 if (newShots != null && newShots.size() != 0) {
-                    // Shots to be removed - all shots minus size of the new shots
-                    List<Shot> shotsToBeRemoved = shots.subList(shots.size()-1-newShots.size(), shots.size()-1);
-                    //shots.removeAll(shotsToBeRemoved);
-                    newShots.addAll(shots.subList(0, shots.size()-newShots.size()));
-                    shots = newShots;
-                    removeShots(shotsToBeRemoved);
-                    RealmResults<Shot> results = realm.where(Shot.class).findAll();
-                    realm.beginTransaction();
-                    results.deleteAllFromRealm();
-                    realm.copyToRealm(shots);
-                    realm.commitTransaction();
+                    if (shots == null || shots.size() == 0) {
+                        shots = newShots;
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(shots);
+                        realm.commitTransaction();
+                    } else {
+                        // Shots to be removed - all shots minus size of the new shots
+                        if (shots.size() == newShots.size()) {
+                            removeShots(shots);
+                        } else {
+                            removeShots(shots.subList(shots.size() - 1 - newShots.size(), shots.size() - 1));
+                        }
+                        newShots.addAll(shots.subList(0, shots.size() - newShots.size()));
+                        shots = newShots;
+                        RealmResults<Shot> results = realm.where(Shot.class).findAll();
+                        realm.beginTransaction();
+                        results.deleteAllFromRealm();
+                        realm.copyToRealm(shots);
+                        realm.commitTransaction();
+                    }
+                    callback.onShotsLoaded(shots);
+                } else {
+                    callback.onShotsLoaded(newShots);
                 }
-                callback.onShotsLoaded(shots);
             }
         });
     }
-
+    // Remove pictures from cache
     public void removeShots(List<Shot> shotsToBeRemoved) {
         for (Shot shot : shotsToBeRemoved) {
             Picasso.with(BbblastApplication.getAppContext()).invalidate(shot.getUrl());

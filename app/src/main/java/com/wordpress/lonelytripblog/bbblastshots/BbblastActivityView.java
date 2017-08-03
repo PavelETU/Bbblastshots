@@ -1,6 +1,5 @@
 package com.wordpress.lonelytripblog.bbblastshots;
 
-import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,18 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.wordpress.lonelytripblog.bbblastshots.data.Shot;
-import com.wordpress.lonelytripblog.bbblastshots.data.ShotsProvider;
 
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import javax.net.ssl.SSLContext;
 
 
 public class BbblastActivityView extends AppCompatActivity implements MVPContract.View {
@@ -36,7 +32,7 @@ public class BbblastActivityView extends AppCompatActivity implements MVPContrac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bbblast);
-        mPresenter = new LogicHandler(this, new ShotsProvider());
+        mPresenter = new LogicHandler(this);
         emptyView = (TextView) findViewById(R.id.emptyView);
         loadingIndicator = (ProgressBar) findViewById(R.id.load_in_progress);
         swipe = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
@@ -111,11 +107,11 @@ public class BbblastActivityView extends AppCompatActivity implements MVPContrac
 
     @Override
     public void showToastWithNoNewShots() {
-
+        Toast.makeText(this, getResources().getString(R.string.no_new_shots_toast), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showToastWithNoInternetConnection() {
-
+        Toast.makeText(this, getResources().getString(R.string.no_internet_toast), Toast.LENGTH_SHORT).show();
     }
 }
