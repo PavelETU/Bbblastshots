@@ -3,9 +3,8 @@ package com.wordpress.lonelytripblog.bbblastshots.data;
 import com.squareup.picasso.Picasso;
 import com.wordpress.lonelytripblog.bbblastshots.BbblastApplication;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -15,18 +14,31 @@ import io.realm.RealmResults;
  * Corresponds model in MVP pattern.
  */
 
+
 public class ShotsProvider implements ProviderInterface {
+
+    private static ShotsProvider INSTANCE = null;
 
     // Local cache for shots
     private List<Shot> shots;
-    private InternetProvider internetProvider;
-    private ProviderInterface databaseProvider;
-    private Realm realm;
+    private final InternetProvider internetProvider;
+    private final ProviderInterface databaseProvider;
+    private final Realm realm;
 
-    public ShotsProvider() {
-        internetProvider = new InternetProvider();
-        realm = Realm.getDefaultInstance();
-        databaseProvider = new DatabaseProvider(realm);
+    private ShotsProvider(InternetProvider internetProvider,
+                          ProviderInterface databaseProvider, Realm realm) {
+        this.internetProvider = internetProvider;
+        this.realm = realm;
+        this.databaseProvider = databaseProvider;
+    }
+
+    public static ShotsProvider getInstance(InternetProvider internetProvider,
+                                            ProviderInterface databaseProvider,
+                                            Realm realm) {
+        if (INSTANCE == null) {
+            INSTANCE = new ShotsProvider(internetProvider, databaseProvider, realm);
+        }
+        return INSTANCE;
     }
 
     // If local cache has no shots - request shots from database, if database empty - request from internet.

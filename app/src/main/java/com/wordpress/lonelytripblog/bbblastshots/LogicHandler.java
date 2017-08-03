@@ -16,9 +16,9 @@ public class LogicHandler implements MVPContract.Presenter {
     private MVPContract.View mView;
     private ProviderInterface mProvider;
 
-    public LogicHandler(MVPContract.View mView) {
+    public LogicHandler(MVPContract.View mView, ShotsProvider shotsProvider) {
         this.mView = mView;
-        this.mProvider = new ShotsProvider();
+        this.mProvider = shotsProvider;
     }
 
     @Override
@@ -31,6 +31,9 @@ public class LogicHandler implements MVPContract.Presenter {
                 if (shots == null || shots.size() == 0) {
                     mView.showEmptyView();
                 } else {
+                    if (mView.isEmptyViewShown()) {
+                        mView.hideEmptyView();
+                    }
                     mView.showShots(shots);
                 }
             }

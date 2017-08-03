@@ -24,6 +24,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class InternetProvider implements ProviderInterface, Callback<List<Shot>> {
 
+    private static InternetProvider INSTANCE = null;
+
     private final static String BASE_URL = "https://api.dribbble.com/v1/";
     private DribbbleRetrofitInterface dribble;
     private LoadShotsCallback shotsMainCallback;
@@ -36,7 +38,14 @@ public class InternetProvider implements ProviderInterface, Callback<List<Shot>>
         this.lastShots = lastShots;
     }
 
-    public InternetProvider() {
+    public static InternetProvider getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new InternetProvider();
+        }
+        return INSTANCE;
+    }
+
+    private InternetProvider() {
         Retrofit retrofit;
         // If device doesn't support HTTPS connection - set OkHttpClient with custom socket,
         // otherwise shots won't be downloaded.
