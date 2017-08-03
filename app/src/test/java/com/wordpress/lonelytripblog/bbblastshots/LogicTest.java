@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.never;
@@ -27,8 +28,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class LogicTest {
 
-    // TODO Add test - after getting shots user updates with no internet - leave all shots and display Toast.
-    // TODO Add test - user updates app and there are nothing new - show Toast.
 
     @Mock
     private MVPContract.View mView;
@@ -43,7 +42,7 @@ public class LogicTest {
 
     @Before
     public void setupPresenter() {
-        mPresenter = new LogicHandler(mView);
+        mPresenter = new LogicHandler(mView, mProvider);
     }
 
     // Verifying right behavior for loading shots
@@ -124,4 +123,32 @@ public class LogicTest {
         inOrder.verify(mView).showShots(allShots);
     }
 
+    // Verifying right behavior for updating shots
+    @Test
+    public void updateRepositoryWithNoInternet() {
+        mPresenter.updateShots();
+
+        // Stubbing with allShots
+        verify(mProvider).getNewShots(captor.capture());
+        captor.getValue().onShotsLoaded(null);
+
+        verify(mView).hideRefreshing();
+        verify(mView).showToastWithNoInternetConnection();
+        verify(mView, never()).showShots(null);
+    }
+
+    // Test toast with no new shots displays properly
+    @Test
+    public void updateRepositoryWithNoNewShots() {
+        List<Shot> emptyList = new ArrayList<Shot>();
+        mPresenter.updateShots();
+
+        // Stubbing with allShots
+        verify(mProvider).getNewShots(captor.capture());
+        captor.getValue().onShotsLoaded(emptyList);
+
+        verify(mView).hideRefreshing();
+        verify(mView).showToastWithNoNewShots();
+        verify(mView, never()).showShots(emptyList);
+    }
 }

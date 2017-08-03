@@ -37,25 +37,13 @@ public class ShotsProvider implements ProviderInterface {
 
 
     @Override
-    public void getShots(final LoadShotsCallback callback) {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                callback.onShotsLoaded(shots);
-            }
-        }, 4000);
+    public void getShots(LoadShotsCallback callback) {
+        callback.onShotsLoaded(shots);
     }
 
     @Override
-    public void getNewShots(final LoadShotsCallback callback) {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                callback.onShotsLoaded(shots);
-            }
-        }, 4000);
+    public void getNewShots(LoadShotsCallback callback) {
+        callback.onShotsLoaded(shots);
     }
 
     public List<Shot> getShots() {

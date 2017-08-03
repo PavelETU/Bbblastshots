@@ -16,9 +16,9 @@ public class LogicHandler implements MVPContract.Presenter {
     private MVPContract.View mView;
     private ProviderInterface mProvider;
 
-    public LogicHandler(MVPContract.View mView) {
+    public LogicHandler(MVPContract.View mView, ProviderInterface mProvider) {
         this.mView = mView;
-        this.mProvider = new ShotsProvider();
+        this.mProvider = mProvider;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class BbblastActivityView extends AppCompatActivity implements MVPContrac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bbblast);
-        mPresenter = new LogicHandler(this);
+        mPresenter = new LogicHandler(this, new ShotsProvider());
         emptyView = (TextView) findViewById(R.id.emptyView);
         loadingIndicator = (ProgressBar) findViewById(R.id.load_in_progress);
         swipe = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
@@ -107,5 +107,15 @@ public class BbblastActivityView extends AppCompatActivity implements MVPContrac
     @Override
     public void hideRefreshing() {
         swipe.setRefreshing(false);
+    }
+
+    @Override
+    public void showToastWithNoNewShots() {
+
+    }
+
+    @Override
+    public void showToastWithNoInternetConnection() {
+
     }
 }

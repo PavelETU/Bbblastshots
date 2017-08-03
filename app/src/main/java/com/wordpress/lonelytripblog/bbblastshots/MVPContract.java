@@ -17,6 +17,8 @@ public class MVPContract {
         void hideEmptyView();
         boolean isEmptyViewShown();
         void hideRefreshing();
+        void showToastWithNoNewShots();
+        void showToastWithNoInternetConnection();
     }
 
     interface Presenter {
