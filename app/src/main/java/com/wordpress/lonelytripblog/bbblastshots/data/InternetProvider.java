@@ -4,14 +4,10 @@ import android.os.Build;
 import android.text.Html;
 import android.util.Log;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
@@ -34,6 +30,11 @@ public class InternetProvider implements ProviderInterface, Callback<List<Shot>>
     private int currentPage;
     private List<Shot> shots;
     private Call<List<Shot>> shotsCall;
+    private List<Shot> lastShots;
+
+    public void setLastShots(List<Shot> lastShots) {
+        this.lastShots = lastShots;
+    }
 
     public InternetProvider() {
         Retrofit retrofit;
@@ -72,11 +73,11 @@ public class InternetProvider implements ProviderInterface, Callback<List<Shot>>
         }
 
         dribble = retrofit.create(DribbbleRetrofitInterface.class);
-        shots = new ArrayList<>(50);
     }
 
     @Override
     public void getShots(LoadShotsCallback callback) {
+        shots = new ArrayList<>(50);
         shotsCall = dribble.getShots(++currentPage);
         shotsCall.enqueue(this);
         shotsMainCallback = callback;
@@ -100,16 +101,23 @@ public class InternetProvider implements ProviderInterface, Callback<List<Shot>>
                         shot.setDescription(Html.fromHtml(shot.getDescription()).toString());
                     }
                 }
+                if (lastShots != null && lastShots.contains(shot)) {
+                    currentPage = 0;
+                    shotsMainCallback.onShotsLoaded(shots);
+                    lastShots = null;
+                    shots = null;
+                    return;
+                }
                 if (!shots.contains(shot)) {
                     shots.add(shot);
+                    // When all shots were loaded - return them to invoker and splash buffer.
+                    if (shots.size() >= 50) {
+                        currentPage = 0;
+                        shotsMainCallback.onShotsLoaded(shots);
+                        shots = null;
+                        return;
+                    }
                 }
-            }
-            // When all shots were loaded - return them to invoker and splash buffer.
-            if (shots.size() >= 50) {
-                currentPage = 0;
-                shotsMainCallback.onShotsLoaded(shots);
-                shots.clear();
-                return;
             }
         }
         // When shots to be downloaded left - get new page with shots.

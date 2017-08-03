@@ -6,12 +6,14 @@ import io.realm.RealmObject;
  * Template for object representing shot.
  */
 
-public class Shot {
+public class Shot extends RealmObject {
     private int id;
     private String title;
     private String description;
     private MyImages images;
     private boolean animated;
+
+    public Shot() {}
 
     public boolean isAnimated() {
         return animated;
@@ -45,32 +47,11 @@ public class Shot {
         return result;
     }
 
-
-    private class MyImages {
-        private String hidpi;
-        private String normal;
-        private String teaser;
-
-        public MyImages(String hidpi, String normal, String teaser) {
-            this.hidpi = hidpi;
-            this.normal = normal;
-            this.teaser = teaser;
-        }
-
-    }
-
     public String getUrl() {
-        // If high quality picture exist - take it,
-        // if not - take with normal quality if it exist, if not - take a teaser.
-        StringBuilder url = new StringBuilder(this.images.hidpi == null ?
-                this.images.normal == null ? this.images.teaser : this.images.normal
-                : this.images.hidpi);
-        // Replace https with http (otherwise devices with api less than 21 will get 502 error).
-        if (url.charAt(4) == 's') {
-            url.deleteCharAt(4);
-        }
-        return url.toString();
+        return images.getUrl();
     }
+
+
     public Shot(int id, String title, String description, String url_hidpi, String url_normal, String url_teaser) {
         this.id = id;
         this.title = title;

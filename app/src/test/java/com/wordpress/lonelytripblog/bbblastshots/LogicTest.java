@@ -27,6 +27,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class LogicTest {
 
+    // TODO Add test - after getting shots user updates with no internet - leave all shots and display Toast.
+    // TODO Add test - user updates app and there are nothing new - show Toast.
+
     @Mock
     private MVPContract.View mView;
 
