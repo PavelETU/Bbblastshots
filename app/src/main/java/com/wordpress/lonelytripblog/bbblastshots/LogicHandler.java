@@ -52,8 +52,10 @@ public class LogicHandler implements MVPContract.Presenter {
                     }
                     mView.showShots(shots);
                 } else {
-                    if (!mView.isEmptyViewShown()) {
-                        mView.showEmptyView();
+                    if (shots == null) {
+                        mView.showToastWithNoInternetConnection();
+                    } else {
+                        mView.showToastWithNoNewShots();
                     }
                 }
             }
